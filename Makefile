@@ -6,9 +6,9 @@ CFLAGS   = -std=c++11 -O3 -Wall -c -g -fmessage-length=0 -Wno-unused -Wno-unused
 IFLAGS   = $(addprefix -I, $(INCLUDES))
 
 # link
-LIBDIRS  = 
+LIBDIRS  =
 LIBS     = png z
-LDFLAGS  = $(addprefix -l, $(LIBS)) $(addprefix -L, $(LIBDIRS)) 
+LDFLAGS  = $(addprefix -l, $(LIBS)) $(addprefix -L, $(LIBDIRS))
 
 # sources
 MODULES  = lightbox
