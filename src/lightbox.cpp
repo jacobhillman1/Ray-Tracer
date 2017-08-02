@@ -5,6 +5,7 @@
 
 #include "Image.h"
 #include "RayHit.h"
+#include "Sphere.h"
 
 using namespace geom;
 using namespace std;
@@ -156,11 +157,11 @@ void render_image(Image<double,3>& img) {
 
             Vec3d color = Vec3d(0.0, 0.0, 0.0);
 
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 10; i++) {
                 color += trace(r, 0);
             }
 
-            color /= 50;
+            color /= 10;
 
             img[xy] = color;
         }
@@ -168,7 +169,6 @@ void render_image(Image<double,3>& img) {
 }
 
 int main(int argc, char** argv) {
-
     Image<double,3> img(1024, 512); // a 3-channel image.
 
     render_image(img);
@@ -177,3 +177,24 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+
+/*
+ * TODO: make a sphere object that takes in the center and radius
+ * you can pass that sphere object a rayhit object
+ * if it doesn't hit the sphere, the rayhit object has a bool value that you
+ * set to false. if it does it, you store the location of the hit, the normal,
+ * and generate a new random direction.
+trace {
+    for(int i = 0; i < 10; i++) {
+        Sphere s = Sphere(radius, center);
+        s.checkHit(rayHitObj);
+        if rayHitObj.hit() {
+            trace(rayHitObj);
+            return colorFormula;
+        }
+        else {
+            return skyColor
+        }
+    }
+}
+*/
