@@ -1,7 +1,6 @@
 #include <iostream>
 #include <geomc/linalg/Vec.h>
 #include <geomc/linalg/AffineTransform.h>
-#include <random>
 
 #include "Image.h"
 #include "RayHit.h"
@@ -15,15 +14,28 @@ Vec3d calculate_surface_normal(Ray<double, 3> r, double sphereRadius, Vec3d cent
 Vec3d calculate_surface_normal_on_sphere(Vec3d intersection, Ray<double, 3> r, double radius, Vec3d center);
 Vec3d find_sphere_intersections(Ray<double, 3> r, double radius, Vec3d center);
 
-std::default_random_engine generator(10);
 
+Vec3d traceWithObjects(Ray<double, 3> r, Sphere s, int depth) {
+    RayHit hitObject = RayHit(r);
+    s.checkHit(hitObject);
+    //cout << hitObject.hitSomething() << endl;
+    if(hitObject.hitSomething()) {
+         return hitObject.getAlbedo() * hitObject.getDotProduct()
+                * traceWithObjects(Ray<double, 3>(hitObject.getHitPoint(), hitObject.getNewDirection()), s, depth + 1);
+    }
+    else {
+        cout << "setting something to false" << endl;
+        return Vec3d(1,1,1);
+    }
+}
+ /*
 inline Vec3d find_random_direction(Vec3d surfaceNormal) {
     // random distribution with mean 0 and variance 1
     std::normal_distribution<double> distribution(0.0, 1);
 
-    double x = distribution(generator);
-    double y = distribution(generator);
-    double z = distribution(generator);
+    double x = distribution(generator2);
+    double y = distribution(generator2);
+    double z = distribution(generator2);
 
     Vec3d randomDirection = Vec3d(x, y, z);
 
@@ -33,7 +45,9 @@ inline Vec3d find_random_direction(Vec3d surfaceNormal) {
     return (randomDirection + surfaceNormal).unit();
 
 }
+*/
 
+/*
 // Trace function, returns a 3-dimensional vector representing the color of the pixel
 inline Vec3d trace(Ray<double, 3> r, int depth) {
     // initialize the color as black
@@ -47,14 +61,11 @@ inline Vec3d trace(Ray<double, 3> r, int depth) {
      * the ray hits a light source.
      * Right now, the ray is only checking for a sphere. In the future, it will
      * check for (tiny) triangles.
-     */
+     / TODO: add another * if uncommenting this function
     if(sphere_intersection(r, radius, sphere) && depth < 15) {
         Vec3d P = find_sphere_intersections(r, radius, sphere);
         Vec3d surfaceNormal = calculate_surface_normal_on_sphere(P, r, 0.5, Vec3d(0.0, 0.0, -4.0));
 
-        // Correct for floating point precision issue
-        // add normal * .05
-        P += surfaceNormal  * 0.05;
 
         Vec3d albedo = Vec3d(.9);
 
@@ -78,6 +89,7 @@ inline Vec3d trace(Ray<double, 3> r, int depth) {
     return color;
 
 }
+*/
 
 // Returns true if a ray r intersects with a sphere with a certain radius at
 // location center from the origin.
@@ -145,6 +157,7 @@ Vec3d calculate_surface_normal_on_sphere(Vec3d intersection, Ray<double, 3> r, d
 }
 
 void render_image(Image<double,3>& img) {
+    Sphere s  = Sphere(Vec3d(0.0, 0.0, 0.0), 0.5, Vec3d(0.5, 0.0, 0.0));
     for (index_t y = 0; y < img.height; ++y) {
         for (index_t x = 0; x < img.width; ++x) {
             Vec2i xy = Vec2i(x,y);                // integer pixel coordinates
@@ -157,11 +170,11 @@ void render_image(Image<double,3>& img) {
 
             Vec3d color = Vec3d(0.0, 0.0, 0.0);
 
-            for (int i = 0; i < 10; i++) {
-                color += trace(r, 0);
+            for (int i = 0; i < 1; i++) {
+                color += traceWithObjects(r, s, 0);
             }
 
-            color /= 10;
+            color /= 1;
 
             img[xy] = color;
         }

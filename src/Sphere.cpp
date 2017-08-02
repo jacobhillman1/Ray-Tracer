@@ -1,11 +1,12 @@
 #include "Sphere.h"
 
-Sphere::Sphere(Vec3d center, float radius) {
+Sphere::Sphere(Vec3d center, float radius, Vec3d albedo) {
     this->center = center;
     this->radius = radius;
+    this->albedo = albedo;
 }
 
-void Sphere::checkHit(RayHit r) {
+void Sphere::checkHit(RayHit &r) {
     // calculating the a, b, and c values to plug into the quadratic equation
     double a = pow(r.getRayDirection().x,2) + pow(r.getRayDirection().y,2) + pow(r.getRayDirection().z,2);
 
@@ -18,33 +19,39 @@ void Sphere::checkHit(RayHit r) {
     if (pow(b, 2) - 4*a*c < 0 || a == 0) {
             r.setIfHit(false);
     }
-
-    double sPos = (-b + sqrt(pow(b, 2) - 4*a*c)) / 2*a;
-    double sNeg = (-b - sqrt(pow(b, 2) - 4*a*c)) / 2*a;
-
-    if(sPos < 0 && sNeg < 0) {
-        r.setIfHit(false);
-    }
     else {
-        r.setIfHit(true);
+        double sPos = (-b + sqrt(pow(b, 2) - 4*a*c)) / 2*a;
+        double sNeg = (-b - sqrt(pow(b, 2) - 4*a*c)) / 2*a;
 
-        double s = 0.0;
+        if(sPos < 0 && sNeg < 0) {
+            r.setIfHit(false);
+        }
+        else {
+            r.setIfHit(true);
 
-        if (sPos < 0 && sNeg > 0)
-            s = sNeg;
-        else if (sNeg < 0 && sPos > 0)
-            s = sPos;
-        else
-            s = fmin(sPos, sNeg);
+            double s = 0.0;
 
-        //TODO: condense into 1 line?
-        Vec3d hitPoint = r.getRay().atMultiple(s);
+            if (sPos < 0 && sNeg > 0)
+                s = sNeg;
+            else if (sNeg < 0 && sPos > 0)
+                s = sPos;
+            else
+                s = fmin(sPos, sNeg);
 
-        r.setHitPoint(hitPoint);
-        r.setSurfaceNormal(calculateSurfaceNormal(hitPoint));
+            Vec3d hitPoint = r.getRay().atMultiple(s);
+            // calculate the surface normal and pass it to the RayHit object
+            r.setSurfaceNormal(calculateSurfaceNormal(hitPoint));
+
+            // correct for floating point precision
+            hitPoint += r.getSurfaceNormal() * 0.05;
+
+            r.setHitPoint(hitPoint);
+            r.setAlbedo(albedo); // give the RayHit object the color of the sphere
+            //TODO: multi-colored objects?
+        }
     }
 }
-// TODO: private??
+
 Vec3d Sphere::calculateSurfaceNormal(Vec3d hitPoint) {
     Vec3d surfaceNormal = hitPoint - center;
     return surfaceNormal.unit();
