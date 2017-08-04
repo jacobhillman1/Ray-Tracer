@@ -15,149 +15,25 @@ Vec3d calculate_surface_normal_on_sphere(Vec3d intersection, Ray<double, 3> r, d
 Vec3d find_sphere_intersections(Ray<double, 3> r, double radius, Vec3d center);
 
 
-Vec3d traceWithObjects(Ray<double, 3> r, Sphere s, int depth) {
+// TODO: template a "shape" class
+Vec3d traceWithObjects(Ray<double, 3> r, Sphere s1, Sphere s2, int depth) {
     RayHit hitObject = RayHit(r);
-    s.checkHit(hitObject);
-    //cout << hitObject.hitSomething() << endl;
+    s1.checkHit(hitObject);
+    if(!hitObject.hitSomething()) {
+        s2.checkHit(hitObject);
+    }
     if(hitObject.hitSomething()) {
          return hitObject.getAlbedo() * hitObject.getDotProduct()
-                * traceWithObjects(Ray<double, 3>(hitObject.getHitPoint(), hitObject.getNewDirection()), s, depth + 1);
+                * traceWithObjects(Ray<double, 3>(hitObject.getHitPoint(), hitObject.getNewDirection()), s1, s2, depth + 1);
     }
     else {
-        cout << "setting something to false" << endl;
-        return Vec3d(1,1,1);
+        return Vec3d(1, 1, 1);
     }
-}
- /*
-inline Vec3d find_random_direction(Vec3d surfaceNormal) {
-    // random distribution with mean 0 and variance 1
-    std::normal_distribution<double> distribution(0.0, 1);
-
-    double x = distribution(generator2);
-    double y = distribution(generator2);
-    double z = distribution(generator2);
-
-    Vec3d randomDirection = Vec3d(x, y, z);
-
-    // normalize
-    randomDirection = randomDirection.unit();
-
-    return (randomDirection + surfaceNormal).unit();
-
-}
-*/
-
-/*
-// Trace function, returns a 3-dimensional vector representing the color of the pixel
-inline Vec3d trace(Ray<double, 3> r, int depth) {
-    // initialize the color as black
-    Vec3d color = Vec3d(0.0, 0.0, 0.0);
-    Vec3d sphere = Vec3d(0.0, 0.0, -4.0);
-    double radius = 0.5;
-
-    /*
-     * If the ray hits something, calculate the surfance normal, then choose
-     * a random direction for a new ray to fire off. Repeat this process until
-     * the ray hits a light source.
-     * Right now, the ray is only checking for a sphere. In the future, it will
-     * check for (tiny) triangles.
-     / TODO: add another * if uncommenting this function
-    if(sphere_intersection(r, radius, sphere) && depth < 15) {
-        Vec3d P = find_sphere_intersections(r, radius, sphere);
-        Vec3d surfaceNormal = calculate_surface_normal_on_sphere(P, r, 0.5, Vec3d(0.0, 0.0, -4.0));
-
-
-        Vec3d albedo = Vec3d(.9);
-
-        Vec3d L = find_random_direction(surfaceNormal);
-
-        double dotproduct = 1; //= surfaceNormal.dot(L);
-
-        color = albedo * dotproduct * trace(Ray<double, 3>(P, L), depth + 1);
-
-    }
-    else {
-        if(r.direction.x > 0.3) {
-            // if the ray doesn't hit a sphere, it hits the sky
-            color = Vec3d(1, 1, 1);
-        }
-        else {
-            color = Vec3d(0, 0, 0);
-        }
-    }
-
-    return color;
-
-}
-*/
-
-// Returns true if a ray r intersects with a sphere with a certain radius at
-// location center from the origin.
-bool sphere_intersection(Ray<double, 3> r, double sphereRadius, Vec3d center) {
-
-    // calculating the a, b, and c values to plug into the quadratic equation
-    double a = pow(r.direction.x,2) + pow(r.direction.y,2) + pow(r.direction.z,2);
-
-    double b = 2 * ((r.origin.x - center.x)*(r.direction.x) + (r.origin.y - center.y)*(r.direction.y)
-        + (r.origin.z - center.z)*(r.direction.z));
-
-    double c = pow((r.origin.x - center.x), 2) + pow((r.origin.y - center.y), 2)
-        + pow((r.origin.z - center.z), 2) - pow(sphereRadius, 2);
-
-    if (pow(b, 2) - 4*a*c < 0 || a == 0) {
-            return false;
-    }
-
-    double sPos = (-b + sqrt(pow(b, 2) - 4*a*c)) / 2*a;
-    double sNeg = (-b - sqrt(pow(b, 2) - 4*a*c)) / 2*a;
-
-    if(sPos < 0 && sNeg < 0) {
-        return false;
-    }
-    else {
-        return true;
-    }
-
-}
-
-// Returns a Vec3d object of the location of the closest intercept to a sphere
-Vec3d find_sphere_intersections(Ray<double, 3> r, double radius, Vec3d center){
-
-    // calculating the a, b, and c values to plug into the quadratic equation
-    double a = pow(r.direction.x,2) + pow(r.direction.y,2) + pow(r.direction.z,2);
-
-    double b = 2 * ((r.origin.x - center.x)*(r.direction.y) + (r.origin.y - center.y)*(r.direction.y)
-        + (r.origin.z - center.z)*(r.direction.z));
-
-    double c = pow((r.origin.x - center.x), 2) + pow((r.origin.y - center.y), 2)
-        + pow((r.origin.z - center.z), 2) - pow(radius, 2);
-
-    double sPos = (-b + sqrt(pow(b, 2) - 4*a*c)) / 2*a;
-    double sNeg = (-b - sqrt(pow(b, 2) - 4*a*c)) / 2*a;
-
-    double s = 0.0;
-
-    if (sPos < 0 && sNeg > 0)
-        s = sNeg;
-    else if (sNeg < 0 && sPos > 0)
-        s = sPos;
-    else
-        s = min(sPos, sNeg);
-
-    Vec3d intersection = r.atMultiple(s);
-
-    return intersection;
-
-}
-
-Vec3d calculate_surface_normal_on_sphere(Vec3d intersection, Ray<double, 3> r, double radius, Vec3d center) {
-    Vec3d surfaceNormal = intersection - center;
-
-    return surfaceNormal.unit();
 }
 
 void render_image(Image<double,3>& img) {
-    Sphere s  = Sphere(Vec3d(0.0, 0.0, 0.0), 0.5, Vec3d(0.5, 0.0, 0.0));
+    Sphere s1  = Sphere(Vec3d(0.0, 0.0, -4.0), 0.5, Vec3d(0.0, 0.0, 1.0));
+    Sphere s2 = Sphere(Vec3d(1.0, 0.0, -4.0), 0.3, Vec3d(1.0, 0.0, 0.0));
     for (index_t y = 0; y < img.height; ++y) {
         for (index_t x = 0; x < img.width; ++x) {
             Vec2i xy = Vec2i(x,y);                // integer pixel coordinates
@@ -170,11 +46,11 @@ void render_image(Image<double,3>& img) {
 
             Vec3d color = Vec3d(0.0, 0.0, 0.0);
 
-            for (int i = 0; i < 1; i++) {
-                color += traceWithObjects(r, s, 0);
+            for (int i = 0; i < 50; i++) {
+                color += traceWithObjects(r, s1, s2, 0);
             }
 
-            color /= 1;
+            color /= 50;
 
             img[xy] = color;
         }

@@ -50,15 +50,22 @@ Vec3d RayHit::getNewDirection() {
 
 void RayHit::generateNewDirection() {
     std::normal_distribution<double> distribution(0.0, 1);
+    bool valid = false;
 
-    double x = distribution(generator);
-    double y = distribution(generator);
-    double z = distribution(generator);
+    while(!valid) {
+        double x = distribution(generator);
+        double y = distribution(generator);
+        double z = distribution(generator);
 
-    newDirection = Vec3d(x, y, z);
+        newDirection = Vec3d(x, y, z);
 
-    // normalize
-    newDirection = newDirection.unit();
+        // normalize
+        newDirection = newDirection.unit();
+
+        if(newDirection.dot(surfaceNormal) > 0) {
+            valid = true;
+        }
+    }
 
     newDirection = (newDirection + surfaceNormal).unit(); //TODO: add .unit()
 
@@ -73,11 +80,11 @@ void RayHit::setAlbedo(Vec3d albedo) {
     this->albedo = albedo;
 }
 
-/* Return true if something has been hit */
 bool RayHit::hitSomething() {
     return isAHit;
 }
 
+// dot product between the surface normal and new direction
 float RayHit::getDotProduct() {
-    return 1.0; //TODO: follow up on why this is 1
+    return 1.0;//surfaceNormal.dot(newDirection); //TODO: follow up on why this is 1
 }
