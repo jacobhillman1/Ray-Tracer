@@ -43,7 +43,7 @@ void Sphere::checkHit(RayHit &r) {
             r.setSurfaceNormal(calculateSurfaceNormal(hitPoint));
 
             // correct for floating point precision
-            hitPoint += r.getSurfaceNormal() * 0.05;
+            hitPoint += r.getSurfaceNormal() * 0.49;
 
             r.setHitPoint(hitPoint);
             r.setAlbedo(albedo); // give the RayHit object the color of the sphere
