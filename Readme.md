@@ -1,9 +1,7 @@
-Lightbox
-========
+Ray Tracer
+==========
 
-This is a simple template project for making a raytracer project in C++.
-
-It contains a subset of [geomc](https://github.com/trbabb/geomc) with most of the shapes and tracing functions removed (since implementing those is the whole point!). Still available are vectors, matrices, quaternions, and rects/ranges.
+This is a simple Ray Tracer implemented in C++. The boilerplate for this project was forked from Tim Babb's "lightbox". The project depends on a subset of [geomc](https://github.com/trbabb/geomc) (Tim Babb's own mathematical library) with most of the shapes and tracing functions removed. 
 
 Requirements
 ============
