@@ -14,7 +14,7 @@ My Implementation
 
 I’m able to create spherical objects in my plane and account for the effect of color and intensity. I have a trace function that takes each object and the ray that is being shot. Each object has a function that takes a ray as the parameter, and if it’s hit, returns the surface normal of the hit. Another ray is then shot from the hit location. Once the ray finds the light source or doesn’t hit anything, the surface normal of each hit is used to determine the “intensity” of the impact that each object has on the resulting color of the light. 
 
-I have implemented Sphere and RayHit classes, and lightbox is where main is located. 
+I have implemented Sphere and RayHit classes, and lightbox is where main is located. Image.h was included in the boilerplate. 
 
 An example output obtained from this program can be seen [here](https://github.com/jacobhillman1/Ray-Tracer/tree/master/output/test.png).
 
