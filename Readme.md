@@ -16,9 +16,7 @@ I’m able to create spherical objects in my plane and account for the effect of
 
 I have implemented Sphere and RayHit classes, and lightbox is where main is located. 
 
-Here's an example output obtained from this program - 
-
-![alt text](https://github.com/jacobhillman1/Ray-Tracer/tree/master/output/test.png)
+Here's an example output obtained from this program can be seen [here](https://github.com/jacobhillman1/Ray-Tracer/tree/master/output/test.png).
 
 Requirements
 ============
