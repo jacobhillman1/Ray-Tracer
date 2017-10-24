@@ -17,8 +17,6 @@ private:
     Vec3d surfaceNormal; //every hit will have a surface normal, but it will depend on what it's hitting
     Vec3d albedo; //store the albedo of whatever was hit
 
-    void generateNewDirection();
-
 public:
     RayHit(Vec3d);
     RayHit(Ray<double, 3>);
@@ -28,6 +26,7 @@ public:
     void setNewDirection(); // TODO: actually use this
     void setSurfaceNormal(Vec3d);
     void setAlbedo(Vec3d);
+    void generateNewDirection();
 
     Vec3d getSurfaceNormal();
     Vec3d getHitPoint();

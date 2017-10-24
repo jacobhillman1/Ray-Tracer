@@ -44,7 +44,6 @@ Vec3d RayHit::getAlbedo() {
 }
 
 Vec3d RayHit::getNewDirection() {
-    generateNewDirection();
     return newDirection;
 }
 
@@ -59,18 +58,18 @@ void RayHit::generateNewDirection() {
 
         newDirection = Vec3d(x, y, z);
 
-        // normalize
+        // normalize (make magnitude = 1)
         newDirection = newDirection.unit();
 
+        // make sure the new direction is not pointing into the object
         if(newDirection.dot(surfaceNormal) > 0) {
             valid = true;
         }
     }
 
-    newDirection = (newDirection + surfaceNormal).unit(); //TODO: add .unit()
+    newDirection = (newDirection + surfaceNormal).unit();
 
 }
-
 
 void RayHit::setSurfaceNormal(Vec3d surfaceNormal) {
     this->surfaceNormal = surfaceNormal;
@@ -86,5 +85,5 @@ bool RayHit::hitSomething() {
 
 // dot product between the surface normal and new direction
 float RayHit::getDotProduct() {
-    return 1.0;//surfaceNormal.dot(newDirection); //TODO: follow up on why this is 1
+    return newDirection.dot(surfaceNormal); //surfaceNormal.dot(newDirection)
 }
