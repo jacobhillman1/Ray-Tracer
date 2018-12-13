@@ -1,7 +1,7 @@
 Ray Tracer
 ==========
 
-This is a simple Ray Tracer implemented in C++. The boilerplate for this project was forked from Tim Babb's [lightbox](https://github.com/trbabb/lightbox). This boilerplate basically only provides an easy way of exporting the image as a png.
+This is a simple Ray Tracer implemented in C++. The boilerplate for this project was forked from Tim Babb's [lightbox](https://github.com/trbabb/lightbox). This boilerplate provides an easy way of exporting the image as a png.
 The project depends on a subset of [geomc](https://github.com/trbabb/geomc) (Tim Babb's own mathematical library, documentation [here](http://trbabb.github.io/geomc/html/modules.html)) with most of the shapes and tracing functions removed. 
 
 How it Works
